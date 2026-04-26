@@ -114,7 +114,7 @@ export default async function AdminDashboard() {
                </div>
                
                <div className="space-y-6">
-                  {recentProducts.map((product) => (
+                  {recentProducts.map((product : any) => (
                     <div key={product.id} className="flex gap-4 items-center pb-4 border-b border-neutral-100 last:border-b-0 last:pb-0">
                       <div className="w-12 h-16 bg-[#E8E3DC] border border-neutral-100 flex-shrink-0 relative overflow-hidden grayscale hover:grayscale-0 transition-all duration-700">
                         <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
