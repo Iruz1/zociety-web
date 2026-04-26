@@ -1,0 +1,4 @@
+input,intent,confidence,status
+"bajunya ready stock?",ask_stock,0.94,MATCHED
+"bisa cod gak bang?",unknown,0.32,MISSED
+"lokasi dimana",ask_location,0.88,MATCHED

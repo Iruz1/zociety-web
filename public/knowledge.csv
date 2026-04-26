@@ -1,0 +1,4 @@
+intent,patterns,response
+ask_shipping,"kapan kirim; ongkir; estimasi sampai","OUR ARTIFACTS ARE DISPATCHED WITHIN 24 HOURS."
+ask_material,"bahan apa; kain; cotton; gsm","WE USE PREMIUM 24S COMBED COTTON FOR OPTIMAL COMFORT."
+greet,"halo; hi; pagi; min","WELCOME TO THE ARCHIVE. HOW CAN I ASSIST YOUR CURATION?"
