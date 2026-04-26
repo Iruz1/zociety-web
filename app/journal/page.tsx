@@ -35,7 +35,7 @@ export default async function Journal() {
             <p className="text-xs uppercase tracking-widest text-[#888888]">No dispatches available at the moment.</p>
           </div>
         ) : (
-          articles.map((article :  any) => (
+          articles.map((article) => (
             // Menggunakan "slug" untuk URL supaya lebih SEO Friendly (misal: /journal/the-raw-hem)
             <Link href={`/journal/${article.id}`} key={article.id} className="group cursor-pointer block border-b border-[#BFBFBF] pb-12">
               

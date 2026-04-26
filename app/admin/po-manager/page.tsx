@@ -22,10 +22,12 @@ export default function PoManagerClient({ initialOrders }: { initialOrders: Orde
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Statistik Dinamis
-  const totalOrders = initialOrders.length;
-  const pendingOrders = initialOrders.filter(o => o.status === 'PENDING').length;
-  const paidOrders = initialOrders.filter(o => o.status === 'PAID').length;
-  const shippedOrders = initialOrders.filter(o => o.status === 'SHIPPED').length;
+  const totalOrders =  initialOrders ? initialOrders.length : 0;
+  const pendingOrders = initialOrders ? initialOrders.filter(o => o.status === 'PENDING').length : 0;
+  const paidOrders = initialOrders ? initialOrders.filter(o => o.status === 'PAID').length : 0;
+  const shippedOrders = initialOrders ? initialOrders.filter(o => o.status === 'SHIPPED').length : 0;
+
+  console.log("Initial Orders:", initialOrders);
 
   // --- FUNGSI UPDATE STATUS ASLI ---
   const handleUpdateStatus = async (id: string, newStatus: string) => {
@@ -118,7 +120,7 @@ export default function PoManagerClient({ initialOrders }: { initialOrders: Orde
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100 italic">
-              {initialOrders.filter(o => activeTab === 'All' || o.status === activeTab).map((order) => (
+              {initialOrders && initialOrders.filter(o => activeTab === 'All' || o.status === activeTab).map((order) => (
                 <tr key={order.id} className="hover:bg-neutral-50 transition-colors">
                   <td className="p-5 font-bold text-black">#{order.id.slice(-5).toUpperCase()}</td>
                   <td className="p-5">{order.firstName} {order.lastName}</td>
