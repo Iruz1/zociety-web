@@ -78,7 +78,7 @@ export default async function AdminDashboard() {
               </p>
             </div>
             <div className="flex gap-4 w-full md:w-auto">
-              <Link href="/admin/addproduct" className="flex-1 md:flex-none text-center px-6 py-3 bg-[#0A0A0A] text-[#F4F1EC] text-[10px] uppercase tracking-widest font-bold hover:bg-[#3A0D0D] transition-all shadow-xl">
+              <Link href="/admin/addproduct" className="flex-1 md:flex-none text-center px-6 py-3 border border-[#0A0A0A] text-[#0A0A0A] text-[10px] uppercase tracking-widest hover:bg-[#0A0A0A] hover:text-[#F4F1EC] transition-colors">
                 + New Product
               </Link>
               <Link href="/admin/addjournal" className="flex-1 md:flex-none text-center px-6 py-3 border border-[#0A0A0A] text-[#0A0A0A] text-[10px] uppercase tracking-widest hover:bg-[#0A0A0A] hover:text-[#F4F1EC] transition-colors">

@@ -1,9 +1,10 @@
-import Link from 'next/link';
 import './globals.css';
 import { subscribeEmail } from './actions/newsletter';
 import { CurrencyProvider } from './context/CurrencyContext';
+import Link from 'next/link';
 import CurrencySwitcher from './components/CurrencySwitcher';
-import Chatbot from './components/Chatbot'; // 1. Import komponen chatbot
+import Chatbot from './components/Chatbot';
+import Navbar from './components/Navbar'; // Import Navbar baru lu
 
 export const metadata = {
   title: 'ZOCIETY | ON OUR TERMZ',
@@ -20,36 +21,13 @@ export default function RootLayout({
       <CurrencyProvider>
         <body className="min-h-screen bg-[#F4F1EC] text-[#0A0A0A] selection:bg-[#3A0D0D] selection:text-[#F4F1EC] font-sans antialiased flex flex-col">
 
-          {/* NAVBAR */}
-          <nav className="fixed w-full top-0 z-50 flex justify-between items-center py-3 px-6 md:py-4 md:px-8 uppercase tracking-widest text-xs font-medium bg-[#0A0A0A] text-[#F4F1EC] border-b border-[#3A0D0D]/30">
-            <Link href="/" className="text-xl md:text-2xl tracking-[0.3em] font-bold hover:text-[#BFBFBF] transition-colors">
-              ZOCIETY
-            </Link>
-
-            <div className="flex items-center space-x-5 md:space-x-12">
-              <Link href="/shop" className="hover:text-[#BFBFBF] transition-colors hidden sm:block">Shop</Link>
-              <Link href="/journal" className="hover:text-[#BFBFBF] transition-colors hidden sm:block">Journal</Link>
-              <Link href="/about" className="hover:text-[#BFBFBF] transition-colors hidden sm:block">About</Link>
-              
-              <div className="hidden md:block">
-                <CurrencySwitcher />
-              </div>
-
-              <Link href="/cart" className="relative group p-1 flex items-center justify-center hover:text-[#BFBFBF] transition-colors">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:scale-110 transition-transform duration-300">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
-              </Link>
-            </div>
-          </nav>
+          {/* 1. PANGGIL NAVBAR DI SINI */}
+          <Navbar />
 
           {/* Main Content */}
           <main className="flex-grow pt-16">{children}</main>
 
-          {/* 2. PASANG CHATBOT DI SINI */}
-          {/* Diletakkan di sini agar melayang di atas semua konten */}
+          {/* Chatbot */}
           <Chatbot />
           
           {/* FOOTER */}

@@ -10,6 +10,8 @@ import { useCurrency } from '../context/CurrencyContext';
 export default function Checkout() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Default payment method
   const [paymentMethod, setPaymentMethod] = useState('bank_transfer');
 
   const { items, clearCart } = useCart();
@@ -40,7 +42,7 @@ export default function Checkout() {
       city: formData.get('city'),
       postalCode: formData.get('postalCode'),
       phone: formData.get('phone'),
-      paymentMethod: paymentMethod,
+      paymentMethod: paymentMethod, // 'bank_transfer' atau 'QRIS'
       subtotal: subtotal,
       shippingFee: shippingFee,
       totalAmount: total,
@@ -62,9 +64,22 @@ export default function Checkout() {
 
       if (!response.ok) throw new Error('Checkout failed');
 
-      clearCart();
-      alert("ARTIFACT RESERVED. REDIRECTING TO ARCHIVE.");
-      router.push('/'); 
+      // TANGKAP RESPONSE JSON DARI API
+      const data = await response.json();
+
+      if (data.success) {
+        clearCart(); // Kosongin keranjang
+        
+        // LOGIC REDIRECT BARU BERDASARKAN PAYMENT METHOD
+        if (paymentMethod === 'QRIS') {
+          router.push(`/checkout/payment/qris?orderId=${data.orderId}`);
+        } else if (paymentMethod === 'bank_transfer') {
+          router.push(`/checkout/payment/transfer?orderId=${data.orderId}`);
+        }
+      } else {
+        alert("Transaction failed. Please try again.");
+        setIsLoading(false);
+      }
     } catch {
       alert("Sync failed. Check your connection.");
       setIsLoading(false);
@@ -106,13 +121,13 @@ export default function Checkout() {
               <h2 className="text-sm font-bold tracking-[0.2em] uppercase text-[#0A0A0A] mb-8 border-b border-[#0A0A0A]/10 pb-4">Payment Method</h2>
               <div className="flex flex-col md:flex-row gap-4">
                 <button type="button" onClick={() => setPaymentMethod('bank_transfer')} className={`flex-1 p-5 border text-[10px] font-bold tracking-[0.3em] transition-all ${paymentMethod === 'bank_transfer' ? 'border-black bg-black text-white' : 'border-neutral-200 text-neutral-400'}`}>BANK TRANSFER</button>
-                <button type="button" onClick={() => setPaymentMethod('credit_card')} className={`flex-1 p-5 border text-[10px] font-bold tracking-[0.3em] transition-all ${paymentMethod === 'credit_card' ? 'border-black bg-black text-white' : 'border-neutral-200 text-neutral-400'}`}>CREDIT CARD</button>
+                <button type="button" onClick={() => setPaymentMethod('QRIS')} className={`flex-1 p-5 border text-[10px] font-bold tracking-[0.3em] transition-all ${paymentMethod === 'QRIS' ? 'border-black bg-black text-white' : 'border-neutral-200 text-neutral-400'}`}>QRIS / E-WALLET</button>
               </div>
             </section>
             
             <div className="pt-8">
               <button type="submit" disabled={isLoading} className="w-full py-6 bg-[#0A0A0A] text-[#F4F1EC] text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-[#1a1a1a] transition-all disabled:opacity-50 shadow-2xl">
-                {isLoading ? 'SYNCING TO ARCHIVE...' : `COMPLETE ORDER — ${formatPrice(total)}`}
+                {isLoading ? 'GENERATING INVOICE...' : `COMPLETE ORDER — ${formatPrice(total)}`}
               </button>
             </div>
           </form>

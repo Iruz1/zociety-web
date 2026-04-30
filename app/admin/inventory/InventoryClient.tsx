@@ -71,7 +71,7 @@ export default function InventoryClient({ initialProducts }: { initialProducts: 
                     <span className="text-[9px] text-neutral-400 uppercase tracking-tighter italic">ID: {product.id.slice(-6)}</span>
                   </div>
                 </td>
-                <td className="p-5 font-bold text-[#0A0A0A]">${product.price}</td>
+                <td className="p-5 font-bold text-[#0A0A0A]">Rp.{product.price}</td>
                 <td className="p-5">
                   <div className="flex flex-wrap gap-1">
                     {product.sizes?.map((s: string) => (
