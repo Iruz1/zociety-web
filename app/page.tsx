@@ -26,7 +26,7 @@ export default function Home() {
             <div className="group cursor-pointer flex flex-col">
               <div className="relative aspect-[3/4] mb-6 overflow-hidden bg-[#BFBFBF]">
                 <Image 
-                  src="/back.jpeg" // Ganti path sesuai fotomu
+                  src="/products/back.jpeg" // Ganti path sesuai fotomu
                   alt="ZOCIETY Look 1"
                   fill
                   // PERBAIKAN 2: Tambah group-hover:blur-[3px] dan efek group-active (saat diklik)
@@ -43,7 +43,7 @@ export default function Home() {
             <div className="group cursor-pointer flex flex-col md:mt-16">
               <div className="relative aspect-[3/4] mb-6 overflow-hidden bg-[#E8E3DC]">
                 <Image 
-                  src="/download (2).jpeg" // Ganti path sesuai fotomu
+                  src="/products/download (2).jpeg" // Ganti path sesuai fotomu
                   alt="ZOCIETY Look 2"
                   fill
                   className="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:blur-[3px] group-hover:opacity-90 group-active:scale-100 group-active:blur-0"
@@ -58,7 +58,7 @@ export default function Home() {
             <div className="group cursor-pointer flex flex-col">
               <div className="relative aspect-[3/4] mb-6 overflow-hidden bg-[#BFBFBF]">
                 <Image 
-                  src="/t-shirts.jpeg" // Ganti path sesuai fotomu
+                  src="/products/t-shirts.jpeg" // Ganti path sesuai fotomu
                   alt="ZOCIETY Look 3"
                   fill
                   className="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:blur-[3px] group-hover:opacity-90 group-active:scale-100 group-active:blur-0"

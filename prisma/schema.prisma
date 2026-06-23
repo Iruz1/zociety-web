@@ -1,0 +1,196 @@
+// Ini adalah penghubung antara kodemu dan Database (PostgreSQL)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ------------------------------------------------------
+// 1. TABEL USER (Pelanggan & Admin)
+// ------------------------------------------------------
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String   @default("adminzo1")
+  role      Role     @default(CUSTOMER)
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi
+  journals  Journal[] 
+}
+
+// ------------------------------------------------------
+// 2. TABEL KAMPANYE PO (Master Switch)
+// ------------------------------------------------------
+model PoCampaign {
+  id        String    @id @default(cuid())
+  name      String    // Contoh: "Collection 01 - Batch 1"
+  startDate DateTime
+  endDate   DateTime
+  maxQuota  Int       // Contoh: 100
+  isActive  Boolean   @default(true) 
+  createdAt DateTime  @default(now())
+
+  products  Product[]
+}
+
+// ------------------------------------------------------
+// 3. TABEL PRODUK (Baju/Artifacts)
+// ------------------------------------------------------
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  images      String[]    // Array URL foto produk
+  sizes       String[]    // Contoh: ["S", "M", "L", "XL"]
+  campaignId  String      
+  createdAt   DateTime    @default(now())
+
+  campaign    PoCampaign  @relation(fields: [campaignId], references: [id])
+}
+
+// ------------------------------------------------------
+// 4. TABEL JOURNAL (Blog / Artikel)
+// ------------------------------------------------------
+model Journal {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique // URL ramah SEO, misal: /journal/editorial-01
+  content     String    @db.Text // Teks panjang untuk isi artikel
+  imageCover  String?   // URL Foto sampul
+  authorId    String
+  isPublished Boolean   @default(true) // Bisa di-draft atau langsung publish
+  publishedAt DateTime? @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  author      User      @relation(fields: [authorId], references: [id])
+}
+
+// ------------------------------------------------------
+// 5. TABEL SUBSCRIBER (Newsletter Email)
+// ------------------------------------------------------
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true) // Kalau user klik "Unsubscribe" nanti jadi false
+  joinedAt  DateTime @default(now())
+}
+
+// ------------------------------------------------------
+// 6. TABEL INBOX (Pesan dari Contact Form)
+// ------------------------------------------------------
+model Inbox {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// ------------------------------------------------------
+// 7. TABEL ORDER & ORDER ITEM (Pesanan Masuk)
+// ------------------------------------------------------
+model Order {
+  id            String      @id @default(cuid())
+  
+  // Data Pembeli (Guest Checkout)
+  email         String
+  firstName     String
+  lastName      String
+  phone         String
+  
+  // Alamat Pengiriman
+  address       String      @db.Text
+  city          String
+  postalCode    String
+  
+  // Rincian Pembayaran
+  paymentMethod String      // "bank_transfer" atau "credit_card"
+  subtotal      Float
+  shippingFee   Float
+  totalAmount   Float
+  status        String      @default("PENDING") // PENDING, PAID, PROCESSING, SHIPPED
+  
+  createdAt     DateTime    @default(now())
+  
+  // Relasi: Satu pesanan bisa punya banyak barang
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  productId String
+  name      String
+  size      String
+  price     Float
+  quantity  Int
+}
+
+// ------------------------------------------------------
+// ENUMS (Pilihan Pasti / Dropdown Status)
+// ------------------------------------------------------
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum PayStatus {
+  PENDING
+  DP_50
+  FULLY_PAID
+  CANCELLED
+}
+
+enum ProdStatus {
+  WAITING_PAYMENT
+  WAITING_FABRIC
+  PRODUCTION
+  QC
+  READY_TO_SHIP
+  SHIPPED
+}
+
+// Data Latih untuk Random Forest
+model BotKnowledge {
+  id        String   @id @default(cuid())
+  intent    String   @unique // Contoh: "ask_material", "ask_shipping"
+  patterns  String   @db.Text // Simpan sebagai string dipisah koma atau JSON
+  response  String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Log Chat untuk bahan evaluasi
+model ChatLog {
+  id        String   @id @default(cuid())
+  userInput String
+  botIntent String   // Hasil tebakan Random Forest
+  confidence Float   // Skor keyakinan model (0.0 - 1.0)
+  createdAt DateTime @default(now())
+}
+
+model ChatbotLog {
+  id               String   @id @default(uuid())
+  userId           String?  // Dibuat optional (?) karena bisa jadi customer nanya sebelum login
+  userMessage      String   @db.Text
+  predictedIntent  String
+  confidenceScore  Float
+  botResponse      String   @db.Text
+  createdAt        DateTime @default(now())
+
+  // Jika lu mau bikin relasi ke tabel User yang sudah ada:
+  // user          User?    @relation(fields: [userId], references: [id])
+}
