@@ -181,3 +181,16 @@ model ChatLog {
   confidence Float   // Skor keyakinan model (0.0 - 1.0)
   createdAt DateTime @default(now())
 }
+
+model ChatbotLog {
+  id               String   @id @default(uuid())
+  userId           String?  // Dibuat optional (?) karena bisa jadi customer nanya sebelum login
+  userMessage      String   @db.Text
+  predictedIntent  String
+  confidenceScore  Float
+  botResponse      String   @db.Text
+  createdAt        DateTime @default(now())
+
+  // Jika lu mau bikin relasi ke tabel User yang sudah ada:
+  // user          User?    @relation(fields: [userId], references: [id])
+}

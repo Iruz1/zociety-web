@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Chatbot() {
@@ -9,19 +9,56 @@ export default function Chatbot() {
     { role: 'bot', text: 'WELCOME TO THE ARCHIVE. HOW CAN I ASSIST YOUR CURATION TODAY?' }
   ]);
   const [input, setInput] = useState('');
+  
+  // Ref untuk auto-scroll
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll ke pesan terbaru
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    const userMsg = { role: 'user', text: input.toUpperCase() };
-    setMessages(prev => [...prev, userMsg]);
+    
+    const userText = String(input).toUpperCase();
+    
+    // 1. Masukin pesan user ke UI
+    setMessages(prev => [...prev, { role: 'user', text: userText }]);
     setInput('');
 
-    setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        text: 'ANALYZING REQUEST... OUR SYSTEM IS CURRENTLY MATCHING YOUR INTENT WITH OUR ARCHIVE.' 
-      }]);
-    }, 600);
+    // 2. Munculin state "loading" gaya Zociety
+    setMessages(prev => [...prev, { role: 'bot', text: 'ANALYZING INTENT...' }]);
+
+    try {
+      // 3. Tembak ke API Next.js kita (Bridge ke Python NLP nantinya)
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userText })
+      });
+
+      const data = await res.json();
+
+      // 4. Timpa pesan "ANALYZING INTENT..." dengan balasan asli dari API
+      const replyText = typeof data.reply === 'string'
+        ? data.reply.toUpperCase()
+        : 'SYSTEM DISCONNECTED. PLEASE TRY AGAIN.';
+
+      setMessages(prev => {
+        const newMsgs = [...prev];
+        newMsgs[newMsgs.length - 1] = { role: 'bot', text: replyText };
+        return newMsgs;
+      });
+
+    } catch (error) {
+      // 5. Kalau API/Server lagi down
+      setMessages(prev => {
+        const newMsgs = [...prev];
+        newMsgs[newMsgs.length - 1] = { role: 'bot', text: 'SYSTEM DISCONNECTED. PLEASE TRY AGAIN.' };
+        return newMsgs;
+      });
+    }
   };
 
   return (
@@ -55,6 +92,8 @@ export default function Chatbot() {
                   </div>
                 </div>
               ))}
+              {/* Target Auto Scroll */}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Input Area */}
@@ -67,7 +106,13 @@ export default function Chatbot() {
                 placeholder="TYPE YOUR INQUIRY..."
                 className="flex-1 bg-transparent text-[10px] tracking-widest outline-none text-[#F4F1EC] placeholder:text-neutral-600"
               />
-              <button onClick={handleSend} className="text-[#F4F1EC] text-[10px] font-bold tracking-widest hover:text-neutral-400 transition-colors">SEND</button>
+              <button 
+                onClick={handleSend} 
+                disabled={!input.trim()} 
+                className="text-[#F4F1EC] text-[10px] font-bold tracking-widest hover:text-neutral-400 transition-colors disabled:opacity-50"
+              >
+                SEND
+              </button>
             </div>
           </motion.div>
         )}
